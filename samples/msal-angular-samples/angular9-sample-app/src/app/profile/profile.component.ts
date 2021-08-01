@@ -23,6 +23,12 @@ export class ProfileComponent implements OnInit {
       .toPromise().then(profile => {
         this.profile = profile;
       });
+
+    let res = this.authService.getAccount();
+      // .toPromise().then(res => {
+      //   let re= res;
+      //   debugger;
+      // });
   }
 
 }

@@ -23,7 +23,10 @@ import { HomeComponent } from './home/home.component';
 import { Configuration } from 'msal';
 
 export const protectedResourceMap: [string, string[]][] = [
-  ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+  // // ['https://graph.microsoft.com/v1.0/me', ['user.read']],
+  // ['https://graph.microsoft.com/v1.0/me', ['https://OrganizationAADB2C1.onmicrosoft.com/a21036de-755c-4895-83d7-f331c9a19e5a/user.read']],
+  // // ['https://graph.microsoft.com/v1.0/me', ['https://graph.microsoft.com/User.Read.All']]
+  ['http://localhost:5000/hello', ['https://OrganizationAADB2C1.onmicrosoft.com/api/demo.read']]
 ];
 
 const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigator.userAgent.indexOf("Trident/") > -1;
@@ -31,28 +34,62 @@ const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigato
 function MSALConfigFactory(): Configuration {
   return {
     auth: {
-      clientId: '6226576d-37e9-49eb-b201-ec1eeb0029b6',
+      /*clientId: '6226576d-37e9-49eb-b201-ec1eeb0029b6',
       authority: "https://login.microsoftonline.com/common/",
       validateAuthority: true,
       redirectUri: "http://localhost:4200/",
       postLogoutRedirectUri: "http://localhost:4200/",
+      navigateToLoginRequestUrl: true,*/
+      clientId: 'a21036de-755c-4895-83d7-f331c9a19e5a',
+      // authority: 'https://login.microsoftonline.com/895e1921-d61e-424d-982a-634114f99646',
+      // authority: 'https://login.microsoftonline.com/895e1921-d61e-424d-982a-634114f99646',
+      authority: 'https://OrganizationAADB2C1.b2clogin.com/tfp/OrganizationAADB2C1.onmicrosoft.com/B2C_1_SI',
+      // authority: 'https://ImplicitFlowMigrationAADB2C.b2clogin.com/tfp/lockrock952gmail.onmicrosoft.com/B2C_1_SI',
+      // authority: 'https://lockrock952gmail.b2clogin.com/tfp/lockrock952gmail.onmicrosoft.com/B2C_1_SI',
+      // authority: 'https://lockrock952gmail.onmicrosoft.com/tfp/lockrock952gmail.onmicrosoft.com/B2C_1_SI',
+      redirectUri: "http://localhost:4200",
+      postLogoutRedirectUri: "http://localhost:4200",
       navigateToLoginRequestUrl: true,
-    },
+      validateAuthority: false,
+/*
+      clientId: '822c4fbf-e60e-45a8-98c0-f88197f2643d',
+      authority:
+        'https://login.microsoftonline.com/96332844-4275-435a-8218-841a471e729f/',
+      redirectUri: 'http://localhost:4200',
+      postLogoutRedirectUri: 'http://localhost:4200',
+      navigateToLoginRequestUrl: false,
+      validateAuthority: false,
+
+      // policies: {
+      //   signUpSignIn: 'B2C_1_SI' as const,
+      //   resetPassword: 'b2c_1_pwreset' as const,
+      // },*/
+    } as Configuration['auth'],
     cache: {
       cacheLocation: "localStorage",
       storeAuthStateInCookie: isIE, // set to true for IE 11
     },
+/*
+    framework: {
+      isAngular:true,
+      unprotectedResources: [],
+      protectedResourceMap: new Map(protectedResourceMap),
+    }
+*/
   };
 }
 
 function MSALAngularConfigFactory(): MsalAngularConfiguration {
   return {
-    popUp: !isIE,
+    popUp: false /*!isIE*/,
     consentScopes: [
-      "user.read",
+      // 'https://graph.microsoft.com/User.Read.All',
+      // "user.read",
+      // 'https://OrganizationAADB2C1.onmicrosoft.com/a21036de-755c-4895-83d7-f331c9a19e5a/user.read',
       "openid",
       "profile",
-      "api://a88bb933-319c-41b5-9f04-eff36d985612/access_as_user"
+      // "api://43600910-c62b-4d1a-bcf9-172eac054ffe/access_as_user"
+      // "api://0e290e14-ccf9-4510-818d-0f355f111257/access_as_user"
     ],
     unprotectedResources: ["https://www.microsoft.com/en-us/"],
     protectedResourceMap,

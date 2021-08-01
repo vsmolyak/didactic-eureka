@@ -8,6 +8,7 @@
   <button mat-raised-button *ngIf="!loggedIn" (click)="login()">Login</button>
   <button mat-raised-button *ngIf="loggedIn" (click)="logout()">Logout</button>
 </mat-toolbar>
+{{apiReqResult | json}}
 <div class="container">
   <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
   <router-outlet *ngIf="!isIframe"></router-outlet>
