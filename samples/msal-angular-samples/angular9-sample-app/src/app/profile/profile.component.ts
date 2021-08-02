@@ -24,7 +24,7 @@ export class ProfileComponent implements OnInit {
         this.profile = profile;
       });
 
-    let res = this.authService.getAccount();
+    // let res = this.authService.getAccount();
       // .toPromise().then(res => {
       //   let re= res;
       //   debugger;

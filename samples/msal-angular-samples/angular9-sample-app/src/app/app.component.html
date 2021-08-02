@@ -5,8 +5,8 @@
 
   <a mat-button [routerLink]="['profile']">Profile</a>
 
-  <button mat-raised-button *ngIf="!loggedIn" (click)="login()">Login</button>
-  <button mat-raised-button *ngIf="loggedIn" (click)="logout()">Logout</button>
+  <button mat-raised-button *ngIf="!loginDisplay" (click)="login()">Login</button>
+  <button mat-raised-button *ngIf="loginDisplay" (click)="logout()">Logout</button>
 </mat-toolbar>
 {{apiReqResult | json}}
 <div class="container">
