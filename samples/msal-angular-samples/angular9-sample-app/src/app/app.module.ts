@@ -24,21 +24,79 @@ import {
 } from '@azure/msal-angular';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
+import {aad_access_scopes, b2cPolicies, environment, loginRequest, tokenRequest} from '../environments/environment';
+
+// export const protectedResourceMap: [string, string[]][] = [
+//   ['http://localhost:5000/hello', ['https://OrganizationAADB2C1.onmicrosoft.com/api/demo.read']]
+// ];
+
+export const CARDS_API = {
+  url: 'https://vantage-dev.azure-api.net/vantage/boards/v4/',
+  key: 'e583acd16f97406e97de9bae1f877f34',
+};
+
+export const DATA_API = {
+  url: 'https://vantage-dev.azure-api.net/data/v1/',
+  key: 'e6b62958232f438d80c282507562210d',
+};
+
+export const DATA_API_V4 = {
+  url: 'https://vantage-dev.azure-api.net/data/v4/',
+};
+
+export const CONFIG_API = {
+  url: 'https://vantage-dev.azure-api.net/vantage/config/v1/',
+};
+
+export const PROFILES_API = {
+  url: 'https://vantage-dev.azure-api.net/vantage/profiles/v1/',
+};
+
+export const SI_STAGING_API = {
+  url: 'https://vantage-dev.azure-api.net/staging/v1/',
+};
+
+export const SI_DATA_UPLOAD_API = {
+  url: 'https://vantage-dev.azure-api.net/si/storage/v1/',
+};
+
+export const APIS = [
+  CARDS_API,
+  DATA_API,
+  DATA_API_V4,
+  CONFIG_API,
+  SI_STAGING_API,
+  SI_DATA_UPLOAD_API,
+  PROFILES_API,
+];
 
 export const protectedResourceMap: [string, string[]][] = [
-  ['http://localhost:5000/hello', ['https://OrganizationAADB2C1.onmicrosoft.com/api/demo.read']]
+  [CARDS_API.url, aad_access_scopes],
+  [DATA_API.url, aad_access_scopes],
+  [DATA_API_V4.url, aad_access_scopes],
+  [CONFIG_API.url, aad_access_scopes],
+  // [SI_STAGING_API.url, aad_si_staging_scope],
+  // [SI_DATA_UPLOAD_API.url, aad_si_dataupload_scope],
+  // [PROFILES_API.url, aad_profiles_scopes],
 ];
+
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: 'a21036de-755c-4895-83d7-f331c9a19e5a',
-       authority: 'https://OrganizationAADB2C1.b2clogin.com/OrganizationAADB2C1.onmicrosoft.com/B2C_1_SI',
-      redirectUri: 'http://localhost:4200',
-      postLogoutRedirectUri: 'http://localhost:4200',
-      knownAuthorities: ['OrganizationAADB2C1.b2clogin.com']
+      // clientId: 'a21036de-755c-4895-83d7-f331c9a19e5a',
+      //  authority: 'https://OrganizationAADB2C1.b2clogin.com/OrganizationAADB2C1.onmicrosoft.com/B2C_1_SI',
+      // redirectUri: 'http://localhost:4200',
+      // postLogoutRedirectUri: 'http://localhost:4200',
+      // knownAuthorities: ['OrganizationAADB2C1.b2clogin.com']
+      clientId: environment.aad_config.clientId,
+      authority: b2cPolicies.authorities.signUpSignIn.authority,
+      knownAuthorities: ['https://vantageaadb2cdev.b2clogin.com'],
+      redirectUri: environment.aad_config.redirectUri,
+      postLogoutRedirectUri: environment.aad_config.postLogoutRedirectUri,
+      navigateToLoginRequestUrl: true,
     },
     cache: {
       cacheLocation: 'localStorage',
@@ -69,7 +127,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: ['https://OrganizationAADB2C1.onmicrosoft.com/api/demo.read'],
+      scopes: [...loginRequest.scopes, ...tokenRequest.scopes],
     },
   };
 }

@@ -47,8 +47,6 @@ export class AppComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.setLoginDisplay();
-        this.checkAndSetActiveAccount();
-        this.apiCall();
       });
 
     this.msalBroadcastService.msalSubject$.pipe(
@@ -85,6 +83,9 @@ export class AppComponent implements OnInit, OnDestroy {
       }
 
       const username = accountObj.username;
+
+      this.checkAndSetActiveAccount();
+      this.apiCall();
     })
       .catch(error => {});
 
@@ -124,15 +125,10 @@ export class AppComponent implements OnInit, OnDestroy {
     // });
   }
 
-  login(userFlowRequest?: RedirectRequest) {
+  login(userFlowRequest?: RedirectRequest) {debugger;
     const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
-    this.authService.loginRedirect();
-    // if (isIE) {
-    //   this.authService.loginRedirect();
-    // } else {
-    //   this.authService.loginPopup();
-    // }
+    // this.authService.loginRedirect();
     if (this.msalGuardConfig.authRequest) {
       this.authService.loginRedirect({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
     } else {
@@ -148,8 +144,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
   }
 
-  apiCall() {
-    this.http.get('http://localhost:5000/hello').subscribe(res => {
+  apiCall() {debugger
+    // this.http.get('http://localhost:5000/hello').subscribe(res => {
+    //   this.apiReqResult = res;
+    // });
+    this.http.get('https://vantage-dev.azure-api.net/vantage/config/v1/me/instances?language-id=1').subscribe(res => {
       this.apiReqResult = res;
     });
 
