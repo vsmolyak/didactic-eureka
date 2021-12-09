@@ -16,8 +16,8 @@ export const environment = {
     // 'https://vantageaadb2cdev.b2clogin.com/vantageaadb2cdev.onmicrosoft.com/B2C_1_SI',
     // redirectUri: 'http://localhost:4200/login',
     // postLogoutRedirectUri: 'http://localhost:4200/login',
-    redirectUri: 'http://localhost:4200',
-    postLogoutRedirectUri: 'http://localhost:4200',
+    redirectUri: 'https://localhost:4200/login',
+    postLogoutRedirectUri: 'https://localhost:4200/login',
     password_authority:
       'https://vantageaadb2cdev.b2clogin.com/tfp/vantageaadb2cdev.onmicrosoft.com/b2c_1_pwreset/',
     // 'https://vantageaadb2cdev.b2clogin.com/vantageaadb2cdev.onmicrosoft.com/b2c_1_pwreset/',

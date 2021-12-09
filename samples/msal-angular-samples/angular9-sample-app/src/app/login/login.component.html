@@ -1,0 +1,9 @@
+<div *ngIf="isLoggedIn"></div>
+<div *ngIf="!isLoggedIn && ctx.msTeams">
+        <br/>
+        <h2 class="titles">Please log in to Vantage by clicking on the button below</h2>
+        <br/>
+        <button class="buttons" (click)="logInFromTeams()" type="button">
+                Log In
+        </button>
+</div>

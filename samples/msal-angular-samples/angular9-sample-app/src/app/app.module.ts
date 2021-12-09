@@ -20,11 +20,14 @@ import {
   MSAL_GUARD_CONFIG,
   MSAL_INTERCEPTOR_CONFIG,
   MsalInterceptorConfiguration,
-  MsalGuardConfiguration
+  MsalGuardConfiguration,
 } from '@azure/msal-angular';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
 import {aad_access_scopes, b2cPolicies, environment, loginRequest, tokenRequest} from '../environments/environment';
+import {checkInTeams} from "./utils";
+import {LoginComponent} from "./login/login.component";
+import {TeamsLoginModalComponent} from "./teams-login-modal/teams-login-modal.component";
 
 // export const protectedResourceMap: [string, string[]][] = [
 //   ['http://localhost:5000/hello', ['https://OrganizationAADB2C1.onmicrosoft.com/api/demo.read']]
@@ -96,7 +99,7 @@ function MSALInstanceFactory(): IPublicClientApplication {
       knownAuthorities: ['https://vantageaadb2cdev.b2clogin.com'],
       redirectUri: environment.aad_config.redirectUri,
       postLogoutRedirectUri: environment.aad_config.postLogoutRedirectUri,
-      navigateToLoginRequestUrl: true,
+      navigateToLoginRequestUrl: checkInTeams(),
     },
     cache: {
       cacheLocation: 'localStorage',
@@ -137,6 +140,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     AppComponent,
     ProfileComponent,
     HomeComponent,
+    LoginComponent,
+    TeamsLoginModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -146,7 +151,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MatToolbarModule,
     MatButtonModule,
     MatListModule,
-    AppRoutingModule,
     MsalModule
   ],
   providers: [
@@ -170,9 +174,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
-    MsalService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, /*MsalRedirectComponent*/]
 })
 export class AppModule {
 }

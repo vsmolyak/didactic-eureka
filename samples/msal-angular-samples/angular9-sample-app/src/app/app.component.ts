@@ -1,17 +1,17 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService} from '@azure/msal-angular';
 // import {Logger, CryptoUtils, AuthenticationParameters, InteractionRequiredAuthError, ClientAuthError} from 'msal';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
 import {
-  AuthenticationResult,
+  BrowserUtils,
   EventMessage,
   EventType,
   InteractionRequiredAuthError,
   InteractionStatus,
   RedirectRequest
-} from "@azure/msal-browser";
-import {filter, takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
+} from '@azure/msal-browser';
+import {filter, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -128,11 +128,18 @@ export class AppComponent implements OnInit, OnDestroy {
   login(userFlowRequest?: RedirectRequest) {debugger;
     const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
-    // this.authService.loginRedirect();
-    if (this.msalGuardConfig.authRequest) {
-      this.authService.loginRedirect({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
+    if (BrowserUtils.isInIframe()) {
+      if (this.msalGuardConfig.authRequest) {
+        this.authService.loginPopup({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
+      } else {
+        this.authService.loginPopup(userFlowRequest);
+      }
     } else {
-      this.authService.loginRedirect(userFlowRequest);
+      if (this.msalGuardConfig.authRequest) {
+        this.authService.loginRedirect({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
+      } else {
+        this.authService.loginRedirect(userFlowRequest);
+      }
     }
   }
 
@@ -144,11 +151,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
   }
 
-  apiCall() {debugger
+  apiCall() {debugger;
     // this.http.get('http://localhost:5000/hello').subscribe(res => {
     //   this.apiReqResult = res;
     // });
-    this.http.get('https://vantage-dev.azure-api.net/vantage/config/v1/me/instances?language-id=1').subscribe(res => {
+             this.http.get('https://vantage-dev.azure-api.net/vantage/config/v1/me/instances?language-id=1').subscribe(res => {
       this.apiReqResult = res;
     });
 
