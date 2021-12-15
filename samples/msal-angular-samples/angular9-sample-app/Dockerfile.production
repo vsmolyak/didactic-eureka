@@ -1,0 +1,41 @@
+
+## building app ##
+
+#FROM node:10.16.3 as packages
+#
+#ARG build_version
+#RUN apt-get install -y git
+#
+#RUN mkdir -p /usr/src
+#
+#WORKDIR /usr/src
+#
+#COPY package.json /usr/src/
+##COPY package-lock.json /usr/src/
+#
+#RUN npm install --production
+
+
+# UPDATE IMAGE NAME. IT SHOULD BE NAME OF OUTPUT OF Dockerfile-installations.production
+FROM vantage.azurecr.io/vantage-focus-web:c9decb8e8-dev-installations as builder
+
+ARG build_version
+
+COPY . /usr/src
+
+#RUN npm run assistant
+
+RUN npm run ${build_version}
+## creating prod image ##
+
+FROM nginx:1.13.9-alpine
+
+COPY --from=builder /usr/src/dist/angular9-sample-app /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/
+
+COPY ssl /etc/nginx/
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

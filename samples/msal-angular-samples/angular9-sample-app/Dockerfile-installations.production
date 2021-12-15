@@ -1,0 +1,34 @@
+# HOW TO RUN
+
+## run in terminal
+#export ENV=dev
+#export SHORT_COMMIT_HASH=$(git rev-parse --short HEAD)
+#export IMAGE_VERSION=$SHORT_COMMIT_HASH-$ENV
+#export IMAGE_NAME=vantage.azurecr.io/vantage-focus-web:$IMAGE_VERSION
+
+## installations (dependent on variables above)
+#docker build -f Dockerfile-installations.production --no-cache -t $IMAGE_NAME --build-arg image_version=$SHORT_COMMIT_HASH --build-arg build_version=build .
+
+## build (replace installations image name is dockerfile below)
+#docker build -f Dockerfile.production --no-cache -t $IMAGE_NAME-build --build-arg image_version=$SHORT_COMMIT_HASH --build-arg build_version=build .
+
+## run (replace image id)
+# docker run -dp 4200:80 92fe7fa3bcb5
+
+
+
+## building app ##
+
+FROM node:10.16.3 as packages
+
+ARG build_version
+RUN apt-get install -y git
+
+RUN mkdir -p /usr/src
+
+WORKDIR /usr/src
+
+COPY package.json /usr/src/
+#COPY package-lock.json /usr/src/
+
+RUN npm install

@@ -12,6 +12,8 @@ import {
 } from '@azure/msal-browser';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import * as microsoftTeams from "@microsoft/teams-js";
+import {TeamsContextService} from "./services/teams-context.service";
 
 @Component({
   selector: 'app-root',
@@ -26,12 +28,16 @@ export class AppComponent implements OnInit, OnDestroy {
   loginDisplay: boolean;
   // tslint:disable-next-line:variable-name
   private readonly _destroying$ = new Subject<void>();
+  get url() {
+    return window.location.href;
+  }
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private msalBroadcastService: MsalBroadcastService,
     private authService: MsalService,
     private http: HttpClient,
+    public ctx: TeamsContextService,
   ) {
   }
 
@@ -144,7 +150,25 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.authService.logout();
+    if (window.name == 'embedded-page-container') {
+      microsoftTeams.initialize(() => {
+        this.ctx.msTeams.authentication.authenticate({
+          url: window.location.origin + '/teamsloginmodal?action=logout',
+          successCallback: () => {
+            window.location.href =
+              window.location.origin + '/login?context=teams';
+          },
+          failureCallback: (error) => {
+            window.location.href =
+              window.location.origin + '/login?context=teams';
+
+            console.log(error);
+          },
+        });
+      });
+    } else {
+      this.authService.logoutRedirect({ postLogoutRedirectUri: '/login' });
+    }
   }
 
   setLoginDisplay() {
