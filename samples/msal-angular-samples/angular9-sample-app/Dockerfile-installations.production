@@ -10,7 +10,8 @@
 #docker build -f Dockerfile-installations.production --no-cache -t $IMAGE_NAME --build-arg image_version=$SHORT_COMMIT_HASH --build-arg build_version=build .
 
 ## build (replace installations image name is dockerfile below)
-#docker build -f Dockerfile.production --no-cache -t $IMAGE_NAME-build --build-arg image_version=$SHORT_COMMIT_HASH --build-arg build_version=build .
+#docker build -f Dockerfile.production --no-cache -t $IMAGE_NAME-build --build-arg image_version=$SHORT_COMMIT_HASH --build-arg build_version=build  --build-arg ${Name of tagged image with installations} .
+#e.g. docker build -f Dockerfile.production --no-cache -t $IMAGE_NAME --build-arg image_version=$SHORT_COMMIT_HASH --build-arg build_version=build --build-arg installations_image=vantage.azurecr.io/vantage-focus-web:c9decb8e8-dev-installations .
 
 ## run (replace image id)
 # docker run -dp 4200:80 92fe7fa3bcb5

@@ -13,6 +13,7 @@ import { EventType, InteractionStatus } from '@azure/msal-browser';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import {isTeamsApp} from "../utils";
+import {AuthService} from "../auth/auth.service";
 
 @Component({
   templateUrl: './login.component.html',
@@ -21,11 +22,12 @@ import {isTeamsApp} from "../utils";
 export class LoginComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
   get isLoggedIn() {
-    return this.msal.instance.getActiveAccount();
+    // return this.msal.instance.getActiveAccount();
+    return this.auth.isLoggedIn;
   }
 
   constructor(
-    // public auth: AuthService,
+    public auth: AuthService,
     private msal: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -34,7 +36,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.msal.instance.getActiveAccount()) {
+    if (this.auth.isLoggedIn) {
       // fix redirection to default page
       // will be changed soon
       // window.location.pathname = '/';
@@ -52,12 +54,13 @@ export class LoginComponent implements OnInit, OnDestroy {
           )
         )
         .subscribe((s) => {
-          if (!this.msal.instance.getActiveAccount()) {
+          if (!this.auth.isLoggedIn) {
             if (
               this.msal.instance.getAllAccounts().length < 1 &&
               !isTeamsApp()
             ) {
-              this.msal.loginRedirect();
+              // this.msal.loginRedirect();
+              this.auth.login();
             }
             // this.auth.login(b2cPolicies.authorities.resetPassword);
           } else {
@@ -91,6 +94,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           'background: #222; color: #bada55'
         );
         console.log(teamsContext.subEntityId);
+        debugger
         window.location.href =
           window.location.origin +
           teamsContext.subEntityId.split(';').join('&'); // temporary fix - VF-4417 - issue related to the validation for focus board guard - which is cause extra redirect

@@ -9,22 +9,6 @@ import {BrowserUtils} from '@azure/msal-browser';
 
 const routes: Routes = [
   {
-    path: 'profile',
-    component: ProfileComponent,
-    canActivate: [
-      MsalGuard
-    ]
-  },
-  {
-    /**
-     * Needed for login on page load for PathLocationStrategy.
-     * See FAQ for details:
-     * https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular/docs/FAQ.md
-     */
-    path: 'auth',
-    component: MsalRedirectComponent
-  },
-  {
     path: 'login',
     pathMatch: 'full',
     component: LoginComponent,
@@ -35,6 +19,22 @@ const routes: Routes = [
     component: TeamsLoginModalComponent,
   },
   {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [
+      MsalGuard
+    ]
+  },
+  // {
+  //   /**
+  //    * Needed for login on page load for PathLocationStrategy.
+  //    * See FAQ for details:
+  //    * https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular/docs/FAQ.md
+  //    */
+  //   path: 'auth',
+  //   component: MsalRedirectComponent
+  // },
+  {
     path: '',
     component: HomeComponent
   }
@@ -43,8 +43,9 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
     useHash: false,
-    initialNavigation: !BrowserUtils.isInIframe() && !BrowserUtils.isInPopup()
-      ? 'enabled' : 'disabled' // Don't perform initial navigation in iframes
+    // initialNavigation: "enabled",
+    // initialNavigation: !BrowserUtils.isInIframe() && !BrowserUtils.isInPopup()
+    //   ? 'enabled' : 'disabled' // Don't perform initial navigation in iframes
   })],
   exports: [RouterModule]
 })

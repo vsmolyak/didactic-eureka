@@ -15,9 +15,10 @@
 #
 #RUN npm install --production
 
+ARG installations_image
 
 # UPDATE IMAGE NAME. IT SHOULD BE NAME OF OUTPUT OF Dockerfile-installations.production
-FROM vantage.azurecr.io/vantage-focus-web:c9decb8e8-dev-installations as builder
+FROM ${installations_image} as builder
 
 ARG build_version
 

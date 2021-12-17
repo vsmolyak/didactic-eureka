@@ -1,8 +1,9 @@
 import * as microsoftTeams from '@microsoft/teams-js';
 import { Component, OnInit } from '@angular/core';
 import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
-import {TeamsContextService} from "../services/teams-context.service";
-import {TEAMS_SIGNIN_MODAL} from "../utils";
+import {TeamsContextService} from '../services/teams-context.service';
+import {TEAMS_SIGNIN_MODAL} from '../utils';
+import {AuthService} from '../auth/auth.service';
 
 @Component({
   selector: 'vp-teams-login-modal',
@@ -15,6 +16,7 @@ export class TeamsLoginModalComponent implements OnInit {
   }
 
   constructor(
+    private auth: AuthService,
     private msal: MsalService,
     private msalBroadcast: MsalBroadcastService,
     public ctx: TeamsContextService
@@ -39,10 +41,11 @@ export class TeamsLoginModalComponent implements OnInit {
         });
     } else if (window.location.search.indexOf('action=logoutredirect') > -1) {
       microsoftTeams.authentication.notifySuccess();
-    } else if (this.msal.instance.getActiveAccount()) {
+    } else if (this.msal.instance.getActiveAccount()) {debugger;
       this.handleSignedIn();
-    } else {
-      this.msal.loginRedirect();
+    } else {debugger;
+      // this.msal.loginRedirect();
+      this.auth.login();
     }
   }
 

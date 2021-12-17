@@ -14,6 +14,7 @@ import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import * as microsoftTeams from "@microsoft/teams-js";
 import {TeamsContextService} from "./services/teams-context.service";
+import {AuthService} from "./auth/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private msalBroadcastService: MsalBroadcastService,
-    private authService: MsalService,
+    // private authService: MsalService,
+    public authService: AuthService,
     private http: HttpClient,
     public ctx: TeamsContextService,
   ) {
@@ -46,54 +48,54 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // this.setLoginDisplay();
     // this.apiCall();
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.setLoginDisplay();
-      });
+    // this.msalBroadcastService.inProgress$
+    //   .pipe(
+    //     filter((status: InteractionStatus) => status === InteractionStatus.None),
+    //     takeUntil(this._destroying$)
+    //   )
+    //   .subscribe(() => {
+    //     this.setLoginDisplay();
+    //   });
 
-    this.msalBroadcastService.msalSubject$.pipe(
-      filter((event: EventMessage) => event.eventType === EventType.ACQUIRE_TOKEN_FAILURE
-        || event.eventType === EventType.LOGIN_FAILURE
-        || event.eventType === EventType.SSO_SILENT_FAILURE),
-    ).subscribe((r) => {/*debugger*/
-        if (
-          r instanceof InteractionRequiredAuthError
-          // TODO: check if need to upgrade this check
-          // || r instanceof ClientAuthError
-        ) {
-          this.authService.logout();
-        }
-      }
-    );
+    // this.msalBroadcastService.msalSubject$.pipe(
+    //   filter((event: EventMessage) => event.eventType === EventType.ACQUIRE_TOKEN_FAILURE
+    //     || event.eventType === EventType.LOGIN_FAILURE
+    //     || event.eventType === EventType.SSO_SILENT_FAILURE),
+    // ).subscribe((r) => {/*debugger*/
+    //     if (
+    //       r instanceof InteractionRequiredAuthError
+    //       // TODO: check if need to upgrade this check
+    //       // || r instanceof ClientAuthError
+    //     ) {
+    //       this.authService.logout();
+    //     }
+    //   }
+    // );
 
-    this.authService.instance.handleRedirectPromise().then(tokenResponse => {
-      let accountObj = null;
-      if (tokenResponse !== null) {
-        accountObj = tokenResponse.account;
-        const id_token = tokenResponse.idToken;
-        const access_token = tokenResponse.accessToken;
-      } else {
-        const currentAccounts = this.authService.instance.getAllAccounts();
-        if (!currentAccounts || currentAccounts.length === 0) {
-          // No user signed in
-          return;
-        } else if (currentAccounts.length > 1) {
-          // More than one user signed in, find desired user with getAccountByUsername(username)
-        } else {
-          accountObj = currentAccounts[0];
-        }
-      }
-
-      const username = accountObj.username;
-
-      this.checkAndSetActiveAccount();
-      this.apiCall();
-    })
-      .catch(error => {});
+    // this.authService.instance.handleRedirectPromise().then(tokenResponse => {
+    //   let accountObj = null;
+    //   if (tokenResponse !== null) {
+    //     accountObj = tokenResponse.account;
+    //     const id_token = tokenResponse.idToken;
+    //     const access_token = tokenResponse.accessToken;
+    //   } else {
+    //     const currentAccounts = this.authService.instance.getAllAccounts();
+    //     if (!currentAccounts || currentAccounts.length === 0) {
+    //       // No user signed in
+    //       return;
+    //     } else if (currentAccounts.length > 1) {
+    //       // More than one user signed in, find desired user with getAccountByUsername(username)
+    //     } else {
+    //       accountObj = currentAccounts[0];
+    //     }
+    //   }
+    //
+    //   const username = accountObj.username;
+    //
+    //   this.checkAndSetActiveAccount();
+    //   this.apiCall();
+    // })
+    //   .catch(error => {});
 
     // this.authService.handleRedirectObservable()
     //   .pipe(
@@ -131,49 +133,49 @@ export class AppComponent implements OnInit, OnDestroy {
     // });
   }
 
-  login(userFlowRequest?: RedirectRequest) {debugger;
-    const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+  // login(userFlowRequest?: RedirectRequest) {debugger;
+  //   const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+  //
+  //   if (BrowserUtils.isInIframe()) {
+  //     if (this.msalGuardConfig.authRequest) {
+  //       this.authService.loginPopup({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
+  //     } else {
+  //       this.authService.loginPopup(userFlowRequest);
+  //     }
+  //   } else {
+  //     if (this.msalGuardConfig.authRequest) {
+  //       this.authService.loginRedirect({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
+  //     } else {
+  //       this.authService.loginRedirect(userFlowRequest);
+  //     }
+  //   }
+  // }
 
-    if (BrowserUtils.isInIframe()) {
-      if (this.msalGuardConfig.authRequest) {
-        this.authService.loginPopup({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
-      } else {
-        this.authService.loginPopup(userFlowRequest);
-      }
-    } else {
-      if (this.msalGuardConfig.authRequest) {
-        this.authService.loginRedirect({...this.msalGuardConfig.authRequest, ...userFlowRequest} as RedirectRequest);
-      } else {
-        this.authService.loginRedirect(userFlowRequest);
-      }
-    }
-  }
+  // logout() {
+  //   if (window.name == 'embedded-page-container') {
+  //     microsoftTeams.initialize(() => {
+  //       this.ctx.msTeams.authentication.authenticate({
+  //         url: window.location.origin + '/teamsloginmodal?action=logout',
+  //         successCallback: () => {
+  //           window.location.href =
+  //             window.location.origin + '/login?context=teams';
+  //         },
+  //         failureCallback: (error) => {
+  //           window.location.href =
+  //             window.location.origin + '/login?context=teams';
+  //
+  //           console.log(error);
+  //         },
+  //       });
+  //     });
+  //   } else {
+  //     this.authService.logoutRedirect({ postLogoutRedirectUri: '/login' });
+  //   }
+  // }
 
-  logout() {
-    if (window.name == 'embedded-page-container') {
-      microsoftTeams.initialize(() => {
-        this.ctx.msTeams.authentication.authenticate({
-          url: window.location.origin + '/teamsloginmodal?action=logout',
-          successCallback: () => {
-            window.location.href =
-              window.location.origin + '/login?context=teams';
-          },
-          failureCallback: (error) => {
-            window.location.href =
-              window.location.origin + '/login?context=teams';
-
-            console.log(error);
-          },
-        });
-      });
-    } else {
-      this.authService.logoutRedirect({ postLogoutRedirectUri: '/login' });
-    }
-  }
-
-  setLoginDisplay() {
-    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
-  }
+  // setLoginDisplay() {
+  //   this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+  // }
 
   apiCall() {debugger;
     // this.http.get('http://localhost:5000/hello').subscribe(res => {
@@ -185,19 +187,19 @@ export class AppComponent implements OnInit, OnDestroy {
 
   }
 
-  checkAndSetActiveAccount() {
-    /**
-     * If no active account set but there are accounts signed in, sets first account to active account
-     * To use active account set here, subscribe to inProgress$ first in your component
-     * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
-     */
-    const activeAccount = this.authService.instance.getActiveAccount();
-
-    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
-      const accounts = this.authService.instance.getAllAccounts();
-      this.authService.instance.setActiveAccount(accounts[0]);
-    }
-  }
+  // checkAndSetActiveAccount() {
+  //   /**
+  //    * If no active account set but there are accounts signed in, sets first account to active account
+  //    * To use active account set here, subscribe to inProgress$ first in your component
+  //    * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
+  //    */
+  //   const activeAccount = this.authService.instance.getActiveAccount();
+  //
+  //   if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
+  //     const accounts = this.authService.instance.getAllAccounts();
+  //     this.authService.instance.setActiveAccount(accounts[0]);
+  //   }
+  // }
 
   ngOnDestroy(): void {
     this._destroying$.next(undefined);
